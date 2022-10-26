@@ -1,0 +1,75 @@
+name: camelapp
+description: A new Flutter project.
+
+
+publish_to: 'none' 
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  font_awesome_flutter: ^10.1.0
+  path: ^1.8.2
+  amplify_flutter: ^0.6.8
+  amplify_auth_cognito: ^0.6.8
+  amplify_storage_s3: ^0.6.8
+  amplify_authenticator: ^0.2.3
+  google_fonts: ^3.0.1
+  #to pick images from poth gallery and camera
+  image_picker: ^0.8.5+3
+  amplify_api: ^0.6.8
+  amplify_datastore: ^0.6.8
+  amplify_core: ^0.6.8
+  hooks_riverpod: ^2.0.2
+  flutter_hooks: ^0.18.5+1
+  provider: ^6.0.4
+  uuid: ^3.0.6
+
+  #for creating the pie chart in the statistics page
+  syncfusion_flutter_charts: ^20.3.50
+  #for the History
+  shared_preferences: ^2.0.6
+  #for the processing screen (the spinging widget animation)
+  flutter_spinkit: ^5.1.0
+  #for signin and singup error messages
+  basic_utils: ^5.4.0
+ 
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+  
+  flutter_lints: ^2.0.0
+
+
+
+
+flutter:
+
+  
+  uses-material-design: true
+
+  
+  assets:
+    - assets/images/
+    - assets/images/Logo.png
+    - assets/labels.txt
+    - assets/lite_camel_model_efficientnetv2-b0.tflite
+
+
+ 
+  fonts:
+    - family: DINNextLTArabic
+      fonts:
+        - asset: assets/fonts/DINNextLTArabic-Regular-4.ttf
+          weight: 400
+  
