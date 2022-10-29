@@ -6,6 +6,7 @@ import 'package:camelapp/widgets/ErrorContainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'ChangePassword.dart';
+import 'loginPage.dart';
 
 const Mainbrown = Color.fromRGBO(152, 78, 51, 1);
 const Mainbeige = const Color.fromRGBO(255, 240, 199, 1);
@@ -85,13 +86,29 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                       ),
                       const SizedBox(height: 10.0),
                       ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(152, 78, 51, 1),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                const Color.fromRGBO(152, 78, 51, 1)),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                            ),
                           ),
                           onPressed: () async {
-                            _key.currentState!.validate();
-                            await AuthService()
+                            _key.currentState!.save();
+                            if (usernameDumy.text == "") {
+                              ErrorConatiner().getContainer(
+                                  "أكمل الحقول المطلوبة", context);
+                              return;
+                            }
+
+                            ErrorMessage = await AuthService()
                                 .RecoverPassword(usernameDumy.text);
+                            if (ErrorMessage != "") {
+                              ErrorConatiner()
+                                  .getContainer(ErrorMessage, context);
+                              return;
+                            }
                             Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                     builder: (_) => ChangePassword(
@@ -105,27 +122,13 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                           )),
                       const SizedBox(height: 10.0),
                       TextButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const SignUpPage()));
-                          },
-                          child: const Center(
-                            child: Text(
-                              'ليس لدي حساب',
-                              style: TextStyle(
-                                shadows: [
-                                  Shadow(
-                                      color: Colors.black,
-                                      offset: Offset(0, -5))
-                                ],
-                                color: Colors.transparent,
-                                decoration: TextDecoration.underline,
-                                decorationColor: Colors.black,
-                                decorationThickness: 3,
-                                decorationStyle: TextDecorationStyle.solid,
-                              ),
-                            ),
-                          ))
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const LoginPage()));
+                        },
+                        child: const Text('الرجوع إالى تسجيل الدخول',
+                            style: TextStyle(color: Mainbrown)),
+                      ),
                     ],
                   ),
                 )

@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:camelapp/widgets/BottomNavigator.dart';
 import 'classificationResult.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +15,10 @@ import 'Processing.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:camelapp/services/HistoryItem.dart';
+import 'dart:math';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as Path;
@@ -31,6 +38,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   static const TextStyle _textStyle = TextStyle(
       color: Colors.black45, fontSize: 16, fontWeight: FontWeight.bold);
+  //setup the history list
+  late SharedPreferences prefs;
+  List HistoryItems = [];
 
   //the name of the image's breed
   String breed = '';
@@ -44,24 +54,41 @@ class _HomeState extends State<Home> {
 
   Future takeImage(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source);
-    var currentUser = await Amplify.Auth.getCurrentUser();
     if (pickedFile == null) {
       print('No image selected');
       return;
     }
-    if (pickedFile == null) {
-      print('No image selected');
-      return;
-    }
-
-    //to save the Image permenently and locally on device
-    // final imagePermanent = await saveImagePermanently(pickedFile.path);
-
     //go to the loading page
-    setState(() => isProcessing = true);
+    setState(() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Processing()),
+      );
+    });
+
+    var currentUser = await Amplify.Auth.getCurrentUser();
 
     //uplaod image to the model to identify
     await IdentifyImage(pickedFile);
+    breed = breedToArabic(breed);
+    //get the current time to use it as an image id for the history
+    DateTime now = new DateTime.now();
+    int id = Random(now.year +
+            now.month +
+            now.day +
+            now.hour +
+            now.minute +
+            now.second +
+            now.millisecond)
+        .nextInt(1000);
+    String imageName = now.toString() + ".jpg";
+    print("==================" + imageName + "=======================");
+    String date = "${now.year}-${now.month}-${now.day}";
+    //add image and its information to the history list and save it locally
+    HistoryItems.add(
+        HistoryItem(id: id, breed: breed, date: date, image: imageName));
+    saveHistory();
+    saveImage(pickedFile, imageName);
 
     var userid = currentUser.userId;
     var uuid = const Uuid().v4();
@@ -87,17 +114,18 @@ class _HomeState extends State<Home> {
     File? Image;
     Image = File(pickedFile.path);
     breed = breed;
-    isProcessing = false;
-
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => Result(image: Image, breed: breed)));
   }
 
+  //upload the image to the server and get the breed name
   IdentifyImage(pickedImage) async {
     File selectedImage = File(pickedImage.path);
     //change link
     final request = http.MultipartRequest(
-        'POST', Uri.parse("http://9756-34-73-205-207.ngrok.io/predict"));
+        'POST',
+        Uri.parse(
+            "http://ec2-3-82-108-159.compute-1.amazonaws.com:8080/predict"));
     final headers = {"Content-type": "multipart/form-data"};
     request.files.add(http.MultipartFile('image',
         selectedImage.readAsBytes().asStream(), selectedImage.lengthSync(),
@@ -113,40 +141,68 @@ class _HomeState extends State<Home> {
     setState(() {});
   }
 
-  // Future<File> saveImagePermanently(String imagePath) async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   print("================the directory: " +
-  //       '${directory.path}' +
-  //       "===================");
-  //   final name = Path.basename(imagePath);
-  //   final image = File('${directory.path}/$name');
+  //mab breed name to arabic
+  breedToArabic(String breed) {
+    if (breed == "Alhumr") {
+      return breed = "حمراء";
+    } else if (breed == "Alshaqh") {
+      return breed = "شقحاء";
+    } else if (breed == "Alshuel") {
+      return breed = "شعل";
+    } else if (breed == "Alsifr") {
+      return breed = "صفراء";
+    } else if (breed == "Alwadah") {
+      return breed = "وضحاء";
+    } else if (breed == "Mijaheem") {
+      return breed = "مجاهيم";
+    }
+  }
 
-  //   return File(imagePath).copy(image.path);
-  // }
+  //to load the history list
+  setupHistory() async {
+    prefs = await SharedPreferences.getInstance();
+    String? stringHistroy = prefs.getString('HistoryI');
+    List HistoryList = jsonDecode(stringHistroy!);
+    for (var HistoryI in HistoryList) {
+      setState(() {
+        HistoryItems.add(HistoryItem(breed: '', date: '', id: 0, image: '')
+            .fromJson(HistoryI));
+      });
+    }
+  }
 
-//////////////////////////////////
+  //save the new identified image in history
+  void saveHistory() {
+    List items = HistoryItems.map((e) => e.toJson()).toList();
+    prefs.setString('HistoryI', jsonEncode(items));
+  }
 
-  // Future uploadFile() async {
-  //   if (_photo == null) return;
-  //   final fileName = basename(_photo!.path);
-  //   const destination = 'files/';
-  //   var imageCounter = navigator.imageCounter;
-  //   try {
-  //     final ref = firebase_storage.FirebaseStorage.instance
-  //         .ref(destination)
-  //         .child('image$imageCounter');
-  //     navigator.imageCounter++;
-  //     await ref.putFile(_photo!);
-  //   } catch (e) {
-  //     print('error occured');
-  //   }
-  // }
+  //to call and setup the history list
   @override
-  Widget build(BuildContext context) => isProcessing
-      ? Processing()
-      : Scaffold(
-          backgroundColor: Mainbeige,
-          body: Container(
+  void initState() {
+    super.initState();
+    setupHistory();
+  }
+
+  //to save the image localy for later use
+  void saveImage(XFile img, String fileName) async {
+    // Step 3: Get directory where we can duplicate selected file.
+    final String path = (await getApplicationDocumentsDirectory()).path;
+
+    File convertedImg = File(img.path);
+
+    // Step 4: Copy the file to a application document directory.
+    // final fileName = basename(convertedImg.path);
+    final File localImage = await convertedImg.copy('$path/$fileName');
+    print("Saved image under: $path/$fileName");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
             //Background Image
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -154,6 +210,14 @@ class _HomeState extends State<Home> {
                 fit: BoxFit.cover,
               ),
             ),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+              child: new Container(
+                  decoration:
+                      new BoxDecoration(color: Colors.white.withOpacity(0.0))),
+            ),
+          ),
+          Container(
             //welcoming messege and a start button
             child: Center(
               child: Column(
@@ -228,98 +292,110 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-        );
+        ],
+      ),
+    );
+  }
 
   void cameraPopUp(context) {
+    var backgroundColor = Color.fromRGBO(173, 222, 254, 0.4);
+    var buttonsColor = Color.fromRGBO(204, 123, 76, 1);
+
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
         builder: (BuildContext bc) {
-          return Container(
-            height: 300,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              color: Mainbrown,
+          return ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                height: 300,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
+                  color: backgroundColor,
+                ),
+                child: Column(children: [
+                  const Text(
+                    'رفع صورة',
+                    style: TextStyle(
+                      fontSize: 35,
+                      fontFamily: 'DINNextLTArabic',
+                      fontWeight: FontWeight.w400,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
+                  const SizedBox(height: 30),
+                  Container(
+                    height: 60,
+                    width: 250,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: buttonsColor,
+                    ),
+                    child: TextButton(
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.black),
+                      ),
+                      //open the camera on press to take a picture
+                      onPressed: () {
+                        takeImage(ImageSource.camera);
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text(
+                        'من الكاميرا',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontFamily: 'DINNextLTArabic',
+                          fontWeight: FontWeight.w400,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    height: 60,
+                    width: 250,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: buttonsColor,
+                    ),
+                    child: TextButton(
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.black),
+                      ),
+                      onPressed: () {
+                        takeImage(ImageSource.gallery);
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text(
+                        'من ألبوم الصور',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontFamily: 'DINNextLTArabic',
+                          fontWeight: FontWeight.w400,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.cancel,
+                      size: 40,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ]),
+              ),
             ),
-            child: Column(children: [
-              const Text(
-                'رفع صورة',
-                style: TextStyle(
-                  fontSize: 35,
-                  fontFamily: 'DINNextLTArabic',
-                  fontWeight: FontWeight.w400,
-                ),
-                textAlign: TextAlign.right,
-              ),
-              const SizedBox(height: 30),
-              Container(
-                height: 60,
-                width: 250,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Mainbeige,
-                ),
-                child: TextButton(
-                  style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.black),
-                  ),
-                  //open the camera on press to take a picture
-                  onPressed: () {
-                    takeImage(ImageSource.camera);
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    'من الكاميرا',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontFamily: 'DINNextLTArabic',
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                height: 60,
-                width: 250,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Mainbeige,
-                ),
-                child: TextButton(
-                  style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.black),
-                  ),
-                  onPressed: () {
-                    takeImage(ImageSource.gallery);
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    'من ألبوم الصور',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontFamily: 'DINNextLTArabic',
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.cancel,
-                  size: 40,
-                  color: Colors.red,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ]),
           );
         });
   }

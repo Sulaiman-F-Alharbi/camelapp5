@@ -1,3 +1,5 @@
+import 'package:camelapp/screens/loginPage.dart';
+
 import 'SignUpPage.dart';
 import '../services/provider.dart';
 import '../services/AuthService.dart';
@@ -34,6 +36,15 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   late String ErrorMessage;
 
+  //to make password visiable or not dynamicly
+  bool _passwordVisible = false;
+  bool _passwordVisible2 = false;
+  @override
+  void initState() {
+    _passwordVisible = false;
+    _passwordVisible2 = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     userSignedIn = UserLoggedIn().getUserCurrentState();
@@ -69,7 +80,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(8.0),
-                  height: 300,
+                  height: 400,
                   width: MediaQuery.of(context).size.width - 30,
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.5),
@@ -90,70 +101,133 @@ class _ChangePasswordState extends State<ChangePassword> {
                         },
                       ),
                       TextFormField(
+                        keyboardType: TextInputType.text,
+                        autocorrect: false,
                         controller: passDumy,
-                        decoration: const InputDecoration(
-                            hintText: 'الرقم السري الجديد',
-                            hintTextDirection: TextDirection.rtl),
+                        obscureText:
+                            !_passwordVisible, //This will obscure text dynamically
+                        decoration: InputDecoration(
+                          hintText: 'كلمة المرور الجديدة',
+                          hintTextDirection: TextDirection.rtl,
+                          // hide password Icon
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Based on passwordVisible state choose the icon
+                              _passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              // Update the state i.e. toogle the state of passwordVisible variable
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        //show a red line if text field is empty
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'الرجاء كتابة إسم المستخدم';
+                            return 'الرجاء كتابة كلمة المرور';
                           }
                           return null;
                         },
                       ),
                       TextFormField(
+                        keyboardType: TextInputType.text,
+                        autocorrect: false,
                         controller: confirmPassDumy,
-                        decoration: const InputDecoration(
-                            hintText: 'تأكيد الرقم السري',
-                            hintTextDirection: TextDirection.rtl),
+                        obscureText:
+                            !_passwordVisible2, //This will obscure text dynamically
+                        decoration: InputDecoration(
+                          hintText: 'تأكيد كلمة المرور',
+                          hintTextDirection: TextDirection.rtl,
+                          // hide password Icon
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Based on passwordVisible state choose the icon
+                              _passwordVisible2
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              // Update the state i.e. toogle the state of passwordVisible variable
+                              setState(() {
+                                _passwordVisible2 = !_passwordVisible2;
+                              });
+                            },
+                          ),
+                        ),
+                        //show a red line if text field is empty
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'الرجاء كتابة إسم المستخدم';
+                            return 'الرجاء كتابة كلمة المرور';
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 10.0),
                       ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(152, 78, 51, 1),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                const Color.fromRGBO(152, 78, 51, 1)),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                            ),
                           ),
                           onPressed: () async {
-                            _key.currentState!.validate();
-                            await AuthService().confirmRecoverPassword(
-                                widget.usernameDumy.text,
-                                passDumy.text,
-                                confirmPassDumy.text);
+                            _key.currentState!.save();
+                            if (passDumy.text == "" ||
+                                confirmPassDumy.text == "" ||
+                                verificatoinCode.text == "") {
+                              ErrorConatiner().getContainer(
+                                  "أكمل الحقول المطلوبة", context);
+                            }
+                            if (passDumy.text != confirmPassDumy.text) {
+                              ErrorConatiner().getContainer(
+                                  'فضلاً تأكد من تطابق كلمة المرور', context);
+                              return;
+                            }
+                            ErrorMessage = await AuthService()
+                                .confirmRecoverPassword(
+                                    widget.usernameDumy.text,
+                                    passDumy.text,
+                                    verificatoinCode.text);
+                            print("================" +
+                                ErrorMessage +
+                                "==============");
+                            if (ErrorMessage != '') {
+                              await ErrorConatiner()
+                                  .getContainer(ErrorMessage, context);
+                              // setState(() {
+                              //   ErrorMessage = '';
+                              // });
+                              return;
+                            }
+
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const LoginPage()));
                           },
                           child: const Center(
                             child: Text(
-                              'التالي',
+                              'تأكيد',
                               style: TextStyle(fontSize: 18),
                             ),
                           )),
                       const SizedBox(height: 10.0),
                       TextButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const SignUpPage()));
-                          },
-                          child: const Center(
-                            child: Text(
-                              'ليس لدي حساب',
-                              style: TextStyle(
-                                shadows: [
-                                  Shadow(
-                                      color: Colors.black,
-                                      offset: Offset(0, -5))
-                                ],
-                                color: Colors.transparent,
-                                decoration: TextDecoration.underline,
-                                decorationColor: Colors.black,
-                                decorationThickness: 3,
-                                decorationStyle: TextDecorationStyle.solid,
-                              ),
-                            ),
-                          ))
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      const LoginPage()));
+                        },
+                        child: const Text('الرجوع إلى تسجيل الدخول',
+                            style: TextStyle(color: Mainbrown)),
+                      ),
                     ],
                   ),
                 )

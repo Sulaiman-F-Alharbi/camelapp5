@@ -26,8 +26,8 @@ class _AboutUs extends State<AboutUs> {
         title: Image.asset(
           'assets/images/camelicon.png',
           fit: BoxFit.contain,
-          height: 70,
-          width: 70,
+          height: 65,
+          width: 65,
           alignment: Alignment.center,
         ),
       ),

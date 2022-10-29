@@ -1,8 +1,9 @@
 import 'loginPage.dart';
 import '../services/AuthService.dart';
 import 'package:flutter/material.dart';
+import 'package:camelapp/widgets/ErrorContainer.dart';
 
-const Mainbrown = const Color.fromRGBO(137, 115, 88, 1);
+const Mainbrown = Color.fromRGBO(152, 78, 51, 1);
 const Mainbeige = const Color.fromRGBO(255, 240, 199, 1);
 
 class SignUpPage extends StatefulWidget {
@@ -13,7 +14,20 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  late String username, password, email;
+  // late String username, password, email;
+
+  TextEditingController passDumy = TextEditingController();
+  TextEditingController usernameDumy = TextEditingController();
+  TextEditingController email = TextEditingController();
+
+  //to make password visiable or not dynamicly
+  bool _passwordVisible = false;
+  @override
+  void initState() {
+    _passwordVisible = false;
+  }
+
+  final _key = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,85 +56,131 @@ class _SignUpPageState extends State<SignUpPage> {
               fit: BoxFit.cover,
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                color: Colors.white.withOpacity(0.5),
-                padding: const EdgeInsets.all(8.0),
-                height: 300.0,
-                width: MediaQuery.of(context).size.width - 30,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      decoration: const InputDecoration(
-                          hintText: 'اسم المستخدم',
-                          hintTextDirection: TextDirection.rtl),
-                      onChanged: (val) {
-                        setState(() {
-                          username = val;
-                        });
-                      },
-                    ),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                          hintText: 'الإيميل',
-                          hintTextDirection: TextDirection.rtl),
-                      onChanged: (val) {
-                        setState(() {
-                          email = val;
-                        });
-                      },
-                    ),
-                    TextFormField(
-                      obscureText: true,
-                      decoration: const InputDecoration(
+          child: Form(
+            key: _key,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  height: 440.0,
+                  width: MediaQuery.of(context).size.width - 30,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: usernameDumy,
+                        decoration: const InputDecoration(
+                            hintText: 'اسم المستخدم',
+                            hintTextDirection: TextDirection.rtl),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'الرجاء كتابة إسم المستخدم';
+                          }
+                          return null;
+                        },
+                        // onChanged: (val) {
+                        //   setState(() {
+                        //     username = val;
+                        //   });
+                        // },
+                      ),
+                      TextFormField(
+                        controller: email,
+                        decoration: const InputDecoration(
+                            hintText: 'البريد الإلكتروني',
+                            hintTextDirection: TextDirection.rtl),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'الرجاء كتابة البريد الإلكتروني';
+                          }
+                          return null;
+                        },
+                        // onChanged: (val) {
+                        //   setState(() {
+                        //     email = val;
+                        //   });
+                        // },
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.text,
+                        autocorrect: false,
+                        controller: passDumy,
+                        obscureText:
+                            !_passwordVisible, //This will obscure text dynamically
+                        decoration: InputDecoration(
                           hintText: 'كلمة المرور',
-                          hintTextDirection: TextDirection.rtl),
-                      onChanged: (val) {
-                        setState(() {
-                          password = val;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 10.0),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(152, 78, 51, 1)),
-                        // const Color.fromARGB(255, 66, 53, 38)),
-                        onPressed: () {
-                          AuthService()
-                              .signUp(email, username, password, context);
+                          hintTextDirection: TextDirection.rtl,
+                          // hide password Icon
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Based on passwordVisible state choose the icon
+                              _passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              // Update the state i.e. toogle the state of passwordVisible variable
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        //show a red line if text field is empty
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'الرجاء كتابة كلمة المرور';
+                          }
+                          return null;
                         },
-                        child: const Center(
-                          child: Text('تسجيل'),
-                        )),
-                    const SizedBox(height: 10.0),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const LoginPage()));
-                        },
-                        child: const Center(
-                          child: Text(
-                            'لدي حساب بالفعل',
-                            style: TextStyle(
-                              shadows: [
-                                Shadow(
-                                    color: Colors.black, offset: Offset(0, -7))
-                              ],
-                              color: Colors.transparent,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Colors.black,
-                              decorationThickness: 3,
-                              decorationStyle: TextDecorationStyle.solid,
+                      ),
+                      const SizedBox(height: 10.0),
+                      ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                const Color.fromRGBO(152, 78, 51, 1)),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
                             ),
                           ),
-                        ))
-                  ],
-                ),
-              )
-            ],
+                          // const Color.fromARGB(255, 66, 53, 38)),
+                          onPressed: () {
+                            _key.currentState!.validate();
+                            if (passDumy.text == "" ||
+                                usernameDumy.text == "" ||
+                                email.text == "") {
+                              ErrorConatiner().getContainer(
+                                  "أكمل الحقول المطلوبة", context);
+                            }
+                            AuthService().signUp(email.text, usernameDumy.text,
+                                passDumy.text, context);
+                          },
+                          child: const Center(
+                            child: Text('تسجيل'),
+                          )),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginPage()));
+                          },
+                          child: const Text('لدي حساب بالفعل',
+                              style: TextStyle(color: Mainbrown)),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

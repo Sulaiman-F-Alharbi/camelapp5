@@ -1,0 +1,148 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "$RCK4WSD.0-main",
+            "cwd": "$Recycle.Bin\\S-1-5-21-388474808-539790872-984399508-1001\\$RCK4WSD.0-main",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "$RCK4WSD.0-main (profile mode)",
+            "cwd": "$Recycle.Bin\\S-1-5-21-388474808-539790872-984399508-1001\\$RCK4WSD.0-main",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "$RCK4WSD.0-main (release mode)",
+            "cwd": "$Recycle.Bin\\S-1-5-21-388474808-539790872-984399508-1001\\$RCK4WSD.0-main",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "$RO2IRBY.1Test",
+            "cwd": "$Recycle.Bin\\S-1-5-21-388474808-539790872-984399508-1001\\$RO2IRBY.1Test",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "$RO2IRBY.1Test (profile mode)",
+            "cwd": "$Recycle.Bin\\S-1-5-21-388474808-539790872-984399508-1001\\$RO2IRBY.1Test",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "$RO2IRBY.1Test (release mode)",
+            "cwd": "$Recycle.Bin\\S-1-5-21-388474808-539790872-984399508-1001\\$RO2IRBY.1Test",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "amplified_to",
+            "cwd": "Users\\ONE\\amplified_to",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "amplified_to (profile mode)",
+            "cwd": "Users\\ONE\\amplified_to",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "amplified_to (release mode)",
+            "cwd": "Users\\ONE\\amplified_to",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "flutter_application_1",
+            "cwd": "$Recycle.Bin\\S-1-5-21-388474808-539790872-984399508-1001\\$RO2IRBY.1Test\\flutter_application_1",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "flutter_application_1 (profile mode)",
+            "cwd": "$Recycle.Bin\\S-1-5-21-388474808-539790872-984399508-1001\\$RO2IRBY.1Test\\flutter_application_1",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "flutter_application_1 (release mode)",
+            "cwd": "$Recycle.Bin\\S-1-5-21-388474808-539790872-984399508-1001\\$RO2IRBY.1Test\\flutter_application_1",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "amplified_todo",
+            "cwd": "Users\\ONE\\Documents\\amplified_todo",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "amplified_todo (profile mode)",
+            "cwd": "Users\\ONE\\Documents\\amplified_todo",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "amplified_todo (release mode)",
+            "cwd": "Users\\ONE\\Documents\\amplified_todo",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "appcml",
+            "cwd": "Users\\ONE\\Documents\\appcml",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "appcml (profile mode)",
+            "cwd": "Users\\ONE\\Documents\\appcml",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "appcml (release mode)",
+            "cwd": "Users\\ONE\\Documents\\appcml",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "flutter_application_test",
+            "cwd": "Users\\ONE\\Documents\\flutter_application_test",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "flutter_application_test (profile mode)",
+            "cwd": "Users\\ONE\\Documents\\flutter_application_test",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "flutter_application_test (release mode)",
+            "cwd": "Users\\ONE\\Documents\\flutter_application_test",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

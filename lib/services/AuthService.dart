@@ -9,7 +9,7 @@ import '../services/provider.dart';
 import 'package:basic_utils/basic_utils.dart';
 
 class AuthService {
-  late String SignInMessege;
+  String ErrorMessege = "";
 
   signUp(email, username, password, context) async {
     try {
@@ -51,13 +51,12 @@ class AuthService {
       if (res.isSignedIn) {
         UserLoggedIn().setUserCurrentState(true);
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => Splash()));
+            .pushReplacement(MaterialPageRoute(builder: (context) => Splash()));
       }
     } on AuthException catch (e) {
       print(e.message);
-      print(signinErrorMess(e.message));
-      print(SignInMessege);
-      return SignInMessege;
+      signinErrorMess(e.message);
+      return ErrorMessege;
     }
   }
 
@@ -66,7 +65,7 @@ class AuthService {
     SignOutResult res = await Amplify.Auth.signOut();
     UserLoggedIn().setUserCurrentState(false);
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => LoginPage()));
+        .pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
   RecoverPassword(username) async {
@@ -77,8 +76,12 @@ class AuthService {
       // setState(() {
       //   isPasswordReset = result.isPasswordReset;
       // });
+      return ErrorMessege;
     } on AmplifyException catch (e) {
       safePrint(e);
+      print("++++++++++++" + e.message + "+++++++++");
+      RecoverPasswordErrorMess(e.message);
+      return ErrorMessege;
     }
   }
 
@@ -88,17 +91,53 @@ class AuthService {
           username: username,
           newPassword: newPassword,
           confirmationCode: confirmationCode);
+      return ErrorMessege;
     } on AmplifyException catch (e) {
       print(e);
+      print("=========" + e.message + "==============");
+      ConfirmPasswordErrorMess(e.message);
+      return ErrorMessege;
     }
   }
 
   signinErrorMess(String e) {
     if ("Failed since user is not authorized." == e) {
-      return SignInMessege = "كلمة السر خاطئة";
+      return ErrorMessege = "كلمة المرور المدخلة خاطئة";
     } else if ("User not found in the system." == e) {
-      return SignInMessege = "اسم المستخدم خاطئ";
+      return ErrorMessege = "إسم المستخدم المدخل خاطئ";
     }
-    return SignInMessege = "المعلومات المدخلة خاطئة";
+    return ErrorMessege = "المعلومات المدخلة خاطئة";
+  }
+
+  RecoverPasswordErrorMess(String e) {
+    if ("One or more parameters are incorrect." == e ||
+        "User not found in the system." == e) {
+      return ErrorMessege = "إسم المستخدم المدخل خاطئ";
+    }
+    if ("Number of allowed operation has exceeded." == e) {
+      return ErrorMessege =
+          "تجاوزت عدد المحاولات المسموحة يرجى المحاولة لاحقاً";
+    } else {
+      return ErrorMessege = "المعلومات المدخلة خاطئة";
+    }
+  }
+
+  confirmCodeErrorMess(String e) {
+    if ("Confirmation code entered is not correct." == e) {
+      return ErrorMessege = "رمز التحقق المدخل خاطئ";
+    }
+    return ErrorMessege = "حدث خطأ يرجى المحاولة لاحقاً";
+  }
+
+  ConfirmPasswordErrorMess(String e) {
+    if ("Confirmation code entered is not correct." == e) {
+      return ErrorMessege = "رمز التحقق المدخل خاطئ";
+    }
+    if ("Number of allowed operation has exceeded." == e) {
+      return ErrorMessege =
+          "تجاوزت عدد المحاولات المسموحة يرجى المحاولة لاحقاً";
+    } else {
+      return ErrorMessege = "المعلومات المدخلة خاطئة";
+    }
   }
 }

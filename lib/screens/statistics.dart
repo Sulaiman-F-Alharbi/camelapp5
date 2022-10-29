@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
-const Mainbrown = const Color.fromRGBO(137, 115, 88, 1);
+// const Mainbrown = const Color.fromRGBO(137, 115, 88, 1);
+const Mainbrown = const Color.fromRGBO(152, 78, 51, 1);
 const Mainbeige = const Color.fromRGBO(255, 240, 199, 1);
 
 class Statistics extends StatefulWidget {
@@ -38,62 +41,68 @@ class _StatisticsState extends State<Statistics> {
           child: Stack(
             alignment: AlignmentDirectional.topCenter,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Color.fromRGBO(157, 109, 92, 0.5),
-                ),
-                alignment: Alignment(0, -0.93),
-                width: 390,
-                height: 380,
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Mainbeige,
-                      ),
-                      width: 220,
-                      height: 45,
-                      alignment: Alignment.topCenter,
-                      child: const Text(
-                        'إحصائيات الجمال',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontFamily: 'DINNextLTArabic',
-                          fontWeight: FontWeight.w400,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+              ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color.fromRGBO(157, 109, 92, 0.7),
                     ),
-                    //creat a pie chart and assigne its values
-                    SfCircularChart(
-                      legend: Legend(
-                        isVisible: true,
-                        overflowMode: LegendItemOverflowMode.wrap,
-                        position: LegendPosition.bottom,
-                        textStyle: TextStyle(
-                            fontFamily: 'DINNextLTArabic',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15),
-                      ),
-                      tooltipBehavior: _tooltipBehavior,
-                      series: <CircularSeries>[
-                        DoughnutSeries<GDPData, String>(
-                          dataSource: _chartData,
-                          pointColorMapper: (GDPData data, _) => data.color,
-                          xValueMapper: (GDPData data, _) => data.name,
-                          yValueMapper: (GDPData data, _) => data.value,
-                          dataLabelMapper: (GDPData data, _) => data.percent,
-                          dataLabelSettings: DataLabelSettings(
-                            isVisible: true,
+                    alignment: Alignment(0, -0.93),
+                    width: 390,
+                    height: 380,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 10),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color.fromRGBO(204, 123, 76, 1),
                           ),
-                          enableTooltip: true,
+                          width: 220,
+                          height: 45,
+                          alignment: Alignment.topCenter,
+                          child: const Text(
+                            'إحصائيات الجمال',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontFamily: 'DINNextLTArabic',
+                              fontWeight: FontWeight.w400,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        //creat a pie chart and assigne its values
+                        SfCircularChart(
+                          legend: Legend(
+                            isVisible: true,
+                            overflowMode: LegendItemOverflowMode.wrap,
+                            position: LegendPosition.bottom,
+                            textStyle: TextStyle(
+                                fontFamily: 'DINNextLTArabic',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15),
+                          ),
+                          tooltipBehavior: _tooltipBehavior,
+                          series: <CircularSeries>[
+                            DoughnutSeries<GDPData, String>(
+                              dataSource: _chartData,
+                              pointColorMapper: (GDPData data, _) => data.color,
+                              xValueMapper: (GDPData data, _) => data.name,
+                              yValueMapper: (GDPData data, _) => data.value,
+                              dataLabelMapper: (GDPData data, _) =>
+                                  data.percent,
+                              dataLabelSettings: DataLabelSettings(
+                                isVisible: true,
+                              ),
+                              enableTooltip: true,
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ],

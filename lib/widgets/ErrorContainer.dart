@@ -5,7 +5,7 @@ class ErrorConatiner {
   getContainer(ErrorMessage, context) {
     return ScaffoldMessenger.maybeOf(context)!.showSnackBar(SnackBar(
       content: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(10, 16, 10, 16),
         height: 60,
         decoration: const BoxDecoration(
           color: Color(0xFFC72c41),
@@ -29,7 +29,7 @@ class ErrorConatiner {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 14,
               ),
             ),
           ],

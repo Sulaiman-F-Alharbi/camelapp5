@@ -25,10 +25,15 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passDumy = TextEditingController();
   TextEditingController usernameDumy = TextEditingController();
 
-  TextEditingController test = TextEditingController();
   final _key = GlobalKey<FormState>();
 
   late String ErrorMessage;
+
+  bool _passwordVisible = false;
+  @override
+  void initState() {
+    _passwordVisible = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(8.0),
-                  height: 300,
+                  height: 360,
                   width: MediaQuery.of(context).size.width - 30,
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.5),
@@ -86,11 +91,32 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                       TextFormField(
+                        keyboardType: TextInputType.text,
+                        autocorrect: false,
                         controller: passDumy,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                            hintText: 'كلمة المرور',
-                            hintTextDirection: TextDirection.rtl),
+                        obscureText:
+                            !_passwordVisible, //This will obscure text dynamically
+                        decoration: InputDecoration(
+                          hintText: 'كلمة المرور',
+                          hintTextDirection: TextDirection.rtl,
+                          // hide password Icon
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              // Based on passwordVisible state choose the icon
+                              _passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              // Update the state i.e. toogle the state of passwordVisible variable
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        //show a red line if text field is empty
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'الرجاء كتابة كلمة المرور';
@@ -100,24 +126,28 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 10.0),
                       ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(152, 78, 51, 1),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                const Color.fromRGBO(152, 78, 51, 1)),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                            ),
                           ),
                           onPressed: () async {
-                            _key.currentState!.validate();
-                            if (userSignedIn == true) {
+                            _key.currentState!.save();
+                            if (passDumy.text == "" ||
+                                usernameDumy.text == "") {
+                              ErrorConatiner().getContainer(
+                                  "أكمل الحقول المطلوبة", context);
+                            } else if (userSignedIn == true) {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => const Splash()));
                             } else {
                               ErrorMessage = await AuthService().signIn(
                                   usernameDumy.text, passDumy.text, context);
-                              print(ErrorMessage);
-                              print("====I am here========");
+
                               if (ErrorMessage != "") {
-                                if (passDumy.text == "" ||
-                                    usernameDumy.text == "") {
-                                  ErrorMessage = "أكمل الحقول المطلوبة";
-                                }
                                 ErrorConatiner()
                                     .getContainer(ErrorMessage, context);
                               }
@@ -129,36 +159,33 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           )),
                       const SizedBox(height: 10.0),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const SignUpPage()));
-                          },
-                          child: const Center(
-                            child: Text(
-                              'ليس لدي حساب',
-                              style: TextStyle(
-                                shadows: [
-                                  Shadow(
-                                      color: Colors.black,
-                                      offset: Offset(0, -5))
-                                ],
-                                color: Colors.transparent,
-                                decoration: TextDecoration.underline,
-                                decorationColor: Colors.black,
-                                decorationThickness: 3,
-                                decorationStyle: TextDecorationStyle.solid,
-                              ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        textDirection: TextDirection.rtl,
+                        children: [
+                          Text(
+                            'ليس لديك حساب؟',
+                            style: TextStyle(
+                              color: Colors.black,
                             ),
-                          )),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const SignUpPage()));
+                            },
+                            child: const Text('تسجيل جديد',
+                                style: TextStyle(color: Mainbrown)),
+                          ),
+                        ],
+                      ),
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      RecoverPassword()));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  RecoverPassword()));
                         },
-                        child: const Text('استرجاع كلمة المرور؟',
+                        child: const Text('إسترجاع كلمة المرور؟',
                             style: TextStyle(color: Mainbrown)),
                       ),
                     ],
