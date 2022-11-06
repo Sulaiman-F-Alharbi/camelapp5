@@ -1,9 +1,7 @@
 import 'package:camelapp/screens/loginPage.dart';
 
-import 'SignUpPage.dart';
 import '../services/provider.dart';
 import '../services/AuthService.dart';
-import '../screens/splash.dart';
 import 'package:camelapp/widgets/ErrorContainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

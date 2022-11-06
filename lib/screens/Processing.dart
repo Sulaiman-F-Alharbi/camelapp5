@@ -1,7 +1,4 @@
-import 'package:cross_file/src/types/interface.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 const Mainbrown = Color.fromRGBO(152, 78, 51, 1);

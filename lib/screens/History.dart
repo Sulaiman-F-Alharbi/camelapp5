@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:camelapp/services/HistoryItem.dart';
-import 'dart:math';
+
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -29,12 +29,16 @@ class _HistoryState extends State<History> {
   setupHistory() async {
     prefs = await SharedPreferences.getInstance();
     String? stringHistroy = prefs.getString('HistoryI');
-    List HistoryList = jsonDecode(stringHistroy!);
-    for (var HistoryI in HistoryList) {
-      setState(() {
-        HistoryItems.add(HistoryItem(breed: '', date: '', id: 0, image: '')
-            .fromJson(HistoryI));
-      });
+    if (stringHistroy != null) {
+      List HistoryList = jsonDecode(stringHistroy);
+      for (var HistoryI in HistoryList) {
+        setState(() {
+          HistoryItems.add(HistoryItem(breed: '', date: '', id: 0, image: '')
+              .fromJson(HistoryI));
+        });
+      }
+    } else {
+      const Text("لايوجد سجل");
     }
   }
 

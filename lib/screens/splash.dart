@@ -17,7 +17,7 @@ class _SplashState extends State<Splash> {
   }
 
   navigateToHome() async {
-    await Future.delayed(const Duration(milliseconds: 3000), () {});
+    await Future.delayed(const Duration(milliseconds: 2000), () {});
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => MyHomePage()));
   }
@@ -29,7 +29,7 @@ class _SplashState extends State<Splash> {
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          color: const Color.fromRGBO(137, 115, 88, 1),
+          color: Color.fromRGBO(152, 78, 51, 1),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

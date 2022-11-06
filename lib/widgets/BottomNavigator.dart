@@ -25,6 +25,7 @@ import 'package:path/path.dart' as Path;
 import 'package:uuid/uuid.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:camelapp/services/SQLiteDB.dart';
 
 const Mainbrown = const Color.fromRGBO(137, 115, 88, 1);
 const Mainbeige = const Color.fromRGBO(255, 240, 199, 1);
@@ -69,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     //uplaod image to the model to identify
     await IdentifyImage(pickedFile);
+    String breedEng = breed;
     breed = breedToArabic(breed);
     //get the current time to use it as an image id for the history
     DateTime now = new DateTime.now();
@@ -109,6 +111,9 @@ class _MyHomePageState extends State<MyHomePage> {
       print('Error uploading image: $e');
     }
 
+    //save image to database
+    await SQLiteDB().insertImageDB(key, breedEng, date, currentUser.userId);
+
     //go to the result page
     File? Image;
     Image = File(pickedFile.path);
@@ -125,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            "http://ec2-3-82-108-159.compute-1.amazonaws.com:8080/predict"));
+            "http://9d0f-2001-16a2-c583-af00-b9bd-27c8-f1eb-f7cb.ngrok.io/predict"));
     final headers = {"Content-type": "multipart/form-data"};
     request.files.add(http.MultipartFile('image',
         selectedImage.readAsBytes().asStream(), selectedImage.lengthSync(),
@@ -162,12 +167,14 @@ class _MyHomePageState extends State<MyHomePage> {
   setupHistory() async {
     prefs = await SharedPreferences.getInstance();
     String? stringHistroy = prefs.getString('HistoryI');
-    List HistoryList = jsonDecode(stringHistroy!);
-    for (var HistoryI in HistoryList) {
-      setState(() {
-        HistoryItems.add(HistoryItem(breed: '', date: '', id: 0, image: '')
-            .fromJson(HistoryI));
-      });
+    if (stringHistroy != null) {
+      List HistoryList = jsonDecode(stringHistroy);
+      for (var HistoryI in HistoryList) {
+        setState(() {
+          HistoryItems.add(HistoryItem(breed: '', date: '', id: 0, image: '')
+              .fromJson(HistoryI));
+        });
+      }
     }
   }
 
@@ -196,16 +203,6 @@ class _MyHomePageState extends State<MyHomePage> {
     final File localImage = await convertedImg.copy('$path/$fileName');
     print("Saved image under: $path/$fileName");
   }
-  // Future<File> saveImagePermanently(String imagePath) async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   print("================the directory: " +
-  //       '${directory.path}' +
-  //       "===================");
-  //   final name = Path.basename(imagePath);
-  //   final image = File('${directory.path}/$name');
-
-  //   return File(imagePath).copy(image.path);
-  // }
 
   final List<Widget> screens = [
     Home(),
@@ -403,18 +400,20 @@ class _MyHomePageState extends State<MyHomePage> {
         );
 
   void cameraPopUp(context) {
-    var backgroundColor = Color.fromRGBO(173, 222, 254, 0.6);
+    var backgroundColor = Color.fromRGBO(173, 222, 254, 0.4);
     var buttonsColor = Color.fromRGBO(204, 123, 76, 1);
 
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
         builder: (BuildContext bc) {
+          double height = MediaQuery.of(context).size.height;
+          double width = MediaQuery.of(context).size.width;
           return ClipRect(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(
-                height: 300,
+                height: height * 0.4,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10),
@@ -431,9 +430,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     textAlign: TextAlign.right,
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: height * 0.03),
                   Container(
-                    height: 60,
+                    height: height * 0.1,
                     width: 250,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -460,9 +459,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: height * 0.01),
                   Container(
-                    height: 60,
+                    height: height * 0.1,
                     width: 250,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),

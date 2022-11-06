@@ -40,37 +40,36 @@ class _AboutUs extends State<AboutUs> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: const [
-            SizedBox(height: 50),
-            Align(
-              alignment: Alignment(0.6, 0),
-              child: Text(
-                'تم صنع هذا التطبيق\n من قبل:',
+        child: Center(
+          child: Column(
+            children: const [
+              SizedBox(height: 50),
+              Text(
+                'تم تصميم هذا التطبيق بواسطة مجموعة من طلبة جامعة الملك سعود:',
                 style: TextStyle(
                   fontSize: 31,
                   fontFamily: 'DINNextLTArabic',
                   fontWeight: FontWeight.w400,
                 ),
-                textAlign: TextAlign.right,
+                textAlign: TextAlign.center,
                 textDirection: TextDirection.rtl,
               ),
-            ),
-            SizedBox(height: 50),
-            Align(
-              alignment: Alignment(0.6, 0),
-              child: Text(
-                '1-نواف الخلف\n2-سليمان الحربي\n3-عبدالعزيز الصديق\n4-عبدالعزيز الحصيني',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontFamily: 'DINNextLTArabic',
-                  fontWeight: FontWeight.w400,
+              SizedBox(height: 50),
+              Align(
+                alignment: Alignment(0.6, 0),
+                child: Text(
+                  '1-نواف الخلف\n2-سليمان الحربي\n3-عبدالعزيز الصديق\n4-عبدالعزيز الحصيني',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontFamily: 'DINNextLTArabic',
+                    fontWeight: FontWeight.w400,
+                  ),
+                  textAlign: TextAlign.right,
+                  textDirection: TextDirection.rtl,
                 ),
-                textAlign: TextAlign.right,
-                textDirection: TextDirection.rtl,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

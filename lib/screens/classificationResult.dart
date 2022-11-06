@@ -1,12 +1,9 @@
-import 'package:cross_file/src/types/interface.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:camelapp/widgets/BottomNavigator.dart';
 import 'GeneralInformations.dart';
 import 'Home.dart';
-import 'package:camelapp/widgets/CustomEndDrawer.dart';
+
 import 'dart:io';
 
 const Mainbrown = Color.fromRGBO(152, 78, 51, 1);

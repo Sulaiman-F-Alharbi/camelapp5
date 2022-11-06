@@ -22,6 +22,8 @@ class CustomEndDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return
         // creating a drawer(hamburger menu)
         ClipRect(
@@ -38,7 +40,7 @@ class CustomEndDrawer extends StatelessWidget {
           child: ListView(
             children: <Widget>[
               //identfy camel option (class takePicture)
-              SizedBox(height: 30),
+              SizedBox(height: height * 0.05),
               //view Statistics page (class statistics)
               Card(
                 elevation: 0,
@@ -74,7 +76,7 @@ class CustomEndDrawer extends StatelessWidget {
                 ),
               ),
               //view general camel information page
-              SizedBox(height: 5),
+              SizedBox(height: height * 0.01),
               Card(
                 elevation: 0,
                 color: Colors.transparent,
@@ -110,7 +112,7 @@ class CustomEndDrawer extends StatelessWidget {
                 ),
               ),
               //View History page
-              SizedBox(height: 5),
+              SizedBox(height: height * 0.01),
               Card(
                 elevation: 0,
                 color: Colors.transparent,
@@ -144,7 +146,7 @@ class CustomEndDrawer extends StatelessWidget {
                 ),
               ),
               //View Help Center page
-              SizedBox(height: 5),
+              SizedBox(height: height * 0.01),
               Card(
                 elevation: 0,
                 color: Colors.transparent,
@@ -177,7 +179,7 @@ class CustomEndDrawer extends StatelessWidget {
                 ),
               ),
               // View About us page
-              SizedBox(height: 5),
+              SizedBox(height: height * 0.01),
               Card(
                 elevation: 0,
                 color: Colors.transparent,
@@ -209,7 +211,7 @@ class CustomEndDrawer extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 270),
+              SizedBox(height: height * 0.35),
               Card(
                 elevation: 0,
                 color: Colors.transparent,

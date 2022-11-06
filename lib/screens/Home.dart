@@ -1,10 +1,7 @@
 import 'dart:ui';
 
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-import 'package:camelapp/widgets/BottomNavigator.dart';
+
 import 'classificationResult.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -26,6 +23,7 @@ import 'package:path/path.dart' as Path;
 import 'dart:io';
 
 import 'package:uuid/uuid.dart';
+import 'package:camelapp/services/SQLiteDB.dart';
 
 const Mainbrown = const Color.fromRGBO(137, 115, 88, 1);
 const Mainbeige = const Color.fromRGBO(255, 240, 199, 1);
@@ -70,6 +68,7 @@ class _HomeState extends State<Home> {
 
     //uplaod image to the model to identify
     await IdentifyImage(pickedFile);
+    String breedEng = breed;
     breed = breedToArabic(breed);
     //get the current time to use it as an image id for the history
     DateTime now = new DateTime.now();
@@ -110,6 +109,9 @@ class _HomeState extends State<Home> {
       print('Error uploading image: $e');
     }
 
+    //save image to database
+    await SQLiteDB().insertImageDB(key, breedEng, date, currentUser.userId);
+
     //go to the result page
     File? Image;
     Image = File(pickedFile.path);
@@ -125,7 +127,7 @@ class _HomeState extends State<Home> {
     final request = http.MultipartRequest(
         'POST',
         Uri.parse(
-            "http://ec2-3-82-108-159.compute-1.amazonaws.com:8080/predict"));
+            "http://9d0f-2001-16a2-c583-af00-b9bd-27c8-f1eb-f7cb.ngrok.io/predict"));
     final headers = {"Content-type": "multipart/form-data"};
     request.files.add(http.MultipartFile('image',
         selectedImage.readAsBytes().asStream(), selectedImage.lengthSync(),
@@ -137,6 +139,9 @@ class _HomeState extends State<Home> {
     http.Response res = await http.Response.fromStream(response);
     final resJson = await jsonDecode(res.body);
     breed = await resJson['message'];
+    print("========== hey print me " +
+        await resJson['message'] +
+        " iam here=========");
     print("==================" + breed + "=======================");
     setState(() {});
   }
@@ -162,12 +167,14 @@ class _HomeState extends State<Home> {
   setupHistory() async {
     prefs = await SharedPreferences.getInstance();
     String? stringHistroy = prefs.getString('HistoryI');
-    List HistoryList = jsonDecode(stringHistroy!);
-    for (var HistoryI in HistoryList) {
-      setState(() {
-        HistoryItems.add(HistoryItem(breed: '', date: '', id: 0, image: '')
-            .fromJson(HistoryI));
-      });
+    if (stringHistroy != null) {
+      List HistoryList = jsonDecode(stringHistroy);
+      for (var HistoryI in HistoryList) {
+        setState(() {
+          HistoryItems.add(HistoryItem(breed: '', date: '', id: 0, image: '')
+              .fromJson(HistoryI));
+        });
+      }
     }
   }
 
@@ -199,102 +206,106 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            //Background Image
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/images/background6.jpg"),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-              child: new Container(
-                  decoration:
-                      new BoxDecoration(color: Colors.white.withOpacity(0.0))),
-            ),
+        body: SingleChildScrollView(
+      child: Container(
+        height: height,
+        //Background Image
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background6.jpg"),
+            fit: BoxFit.fill,
           ),
-          Container(
-            //welcoming messege and a start button
-            child: Center(
-              child: Column(
-                children: [
-                  const SizedBox(height: 50),
-                  const Text(
-                    'مرحبا بك في تطبيق\nجملي',
-                    style: TextStyle(
-                      fontSize: 35,
-                      fontFamily: 'DINNextLTArabic',
-                      fontWeight: FontWeight.w400,
+        ),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            decoration: BoxDecoration(color: Colors.white.withOpacity(0.0)),
+            child: Container(
+              //welcoming messege and a start button
+              child: Center(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: height * 0.05,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 40),
-                  const Text(
-                    'يتيح لك التطبيق التعرف على\nنوع الجمال بواسطة الصور',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontFamily: 'DINNextLTArabic',
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  //Take an image button
-                  const SizedBox(height: 50),
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Color.fromRGBO(142, 99, 83, 0.8),
+                    const Text(
+                      'مرحبا بك في تطبيق\nجملي',
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontFamily: 'DINNextLTArabic',
+                        fontWeight: FontWeight.w400,
                       ),
-                      width: 200,
-                      height: 190,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateProperty.all<Color>(Colors.black),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      height: height * 0.05,
+                    ),
+                    const Text(
+                      'يتيح لك التطبيق التعرف على\nنوع الجمال بواسطة الصور',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: 'DINNextLTArabic',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    //Take an image button
+                    SizedBox(height: height * 0.05),
+                    Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white.withOpacity(0.5),
                         ),
-                        onPressed: () {
-                          cameraPopUp(context);
-                        },
-                        child: Column(
-                          textDirection: TextDirection.rtl,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const <Widget>[
-                            Icon(
-                              Icons.camera_alt,
-                              size: 35,
-                              textDirection: TextDirection.rtl,
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                "اضغط هنا للتعرف على نوع الجمل",
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontFamily: 'DINNextLTArabic',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                textAlign: TextAlign.center,
+                        width: width * 0.5,
+                        height: height * 0.3,
+                        child: TextButton(
+                          style: ButtonStyle(
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.black),
+                          ),
+                          onPressed: () {
+                            cameraPopUp(context);
+                          },
+                          child: Column(
+                            textDirection: TextDirection.rtl,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: const <Widget>[
+                              Icon(
+                                Icons.camera_alt,
+                                size: 35,
                                 textDirection: TextDirection.rtl,
                               ),
-                            ),
-                          ],
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  "اضغط هنا للتعرف على نوع الجمل",
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    fontFamily: 'DINNextLTArabic',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  textDirection: TextDirection.rtl,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ],
+        ),
       ),
-    );
+    ));
   }
 
   void cameraPopUp(context) {
@@ -305,11 +316,13 @@ class _HomeState extends State<Home> {
         context: context,
         backgroundColor: Colors.transparent,
         builder: (BuildContext bc) {
+          double height = MediaQuery.of(context).size.height;
+          double width = MediaQuery.of(context).size.width;
           return ClipRect(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(
-                height: 300,
+                height: height * 0.4,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10),
@@ -326,9 +339,9 @@ class _HomeState extends State<Home> {
                     ),
                     textAlign: TextAlign.right,
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: height * 0.03),
                   Container(
-                    height: 60,
+                    height: height * 0.1,
                     width: 250,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -355,9 +368,9 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: height * 0.01),
                   Container(
-                    height: 60,
+                    height: height * 0.1,
                     width: 250,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),

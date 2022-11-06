@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
 import '../services/provider.dart';
-import 'package:basic_utils/basic_utils.dart';
 
 class AuthService {
   String ErrorMessege = "";

@@ -23,6 +23,7 @@ class _HelpCenter extends State<HelpCenter> {
   TextEditingController subject = TextEditingController();
   TextEditingController body = TextEditingController();
 
+  //send email to emailJS
   sendEmail(String name, String email, String subject, String message) async {
     final serviceId = 'service_1vr7qm9';
     final templateId = 'template_bmu8w4y';
@@ -51,124 +52,130 @@ class _HelpCenter extends State<HelpCenter> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Mainbeige,
-      //Top bar with the logo
-      appBar: AppBar(
-        backgroundColor: Mainbrown,
-        iconTheme: const IconThemeData(color: Colors.black),
-        toolbarHeight: 60,
-        centerTitle: true,
-        title: Image.asset(
-          'assets/images/camelicon.png',
-          fit: BoxFit.contain,
-          height: 65,
-          width: 65,
-          alignment: Alignment.center,
-        ),
-      ),
-      endDrawer: const CustomEndDrawer(),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.transparent,
-          image: DecorationImage(
-            image: AssetImage("assets/images/background6.jpg"),
-            fit: BoxFit.cover,
+        backgroundColor: const Color.fromARGB(255, 66, 30, 14),
+        //Top bar with the logo
+        appBar: AppBar(
+          backgroundColor: Mainbrown,
+          iconTheme: const IconThemeData(color: Colors.black),
+          toolbarHeight: 60,
+          centerTitle: true,
+          title: Image.asset(
+            'assets/images/camelicon.png',
+            fit: BoxFit.contain,
+            height: 65,
+            width: 65,
+            alignment: Alignment.center,
           ),
         ),
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Center(
-            child: Form(
-              key: _key,
-              child: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Card(
-                      child: TextFormField(
-                        controller: email,
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'بريدك الإلكتروني*',
-                            hintTextDirection: TextDirection.rtl,
-                            fillColor: Colors.blue),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'الرجاء كتابة بريدك الإلكتروني';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Card(
-                      child: TextFormField(
-                        controller: subject,
-                        textAlign: TextAlign.right,
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'العنوان',
-                            hintTextDirection: TextDirection.rtl,
-                            fillColor: Colors.blue),
-                      ),
-                    ),
-                    Card(
-                      child: TextFormField(
-                        controller: body,
-                        maxLines: 8,
-                        textAlign: TextAlign.right,
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'أكتب المشكلة التي تعاني منها*',
-                            hintTextDirection: TextDirection.rtl,
-                            fillColor: Colors.blue),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'الرجاء كتابةالمشكلة التي تعاني منها';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 25),
-                    Card(
-                      color: Color.fromRGBO(217, 165, 115, 1),
-                      child: TextButton(
-                          onPressed: () async {
-                            _key.currentState!.save();
-                            if (_key.currentState!.validate()) {
-                              var currentUser =
-                                  await Amplify.Auth.getCurrentUser();
-                              sendEmail(currentUser.username, email.text,
-                                  subject.text, body.text);
-
-                              Navigator.pop(context);
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        const HelpCenter2()),
-                              );
-                            }
-                          },
-                          child: const Text(
-                            "إرسال",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'DINNextLTArabic',
-                                color: Colors.black),
+        endDrawer: const CustomEndDrawer(),
+        body: SafeArea(
+            child: SingleChildScrollView(
+          child: Container(
+            height: height,
+            width: width,
+            decoration: const BoxDecoration(
+              color: Colors.transparent,
+              image: DecorationImage(
+                image: AssetImage("assets/images/background6.jpg"),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Center(
+                child: Form(
+                  key: _key,
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Card(
+                          child: TextFormField(
+                            controller: email,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'بريدك الإلكتروني*',
+                                hintTextDirection: TextDirection.rtl,
+                                fillColor: Colors.blue),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'الرجاء كتابة بريدك الإلكتروني';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        Card(
+                          child: TextFormField(
+                            controller: subject,
                             textAlign: TextAlign.right,
-                          )),
-                    )
-                  ],
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'العنوان',
+                                hintTextDirection: TextDirection.rtl,
+                                fillColor: Colors.blue),
+                          ),
+                        ),
+                        Card(
+                          child: TextFormField(
+                            controller: body,
+                            maxLines: 8,
+                            textAlign: TextAlign.right,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'أكتب المشكلة التي تعاني منها*',
+                                hintTextDirection: TextDirection.rtl,
+                                fillColor: Colors.blue),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'الرجاء كتابةالمشكلة التي تعاني منها';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        Card(
+                          color: Color.fromRGBO(221, 212, 208, 0.5),
+                          child: TextButton(
+                              onPressed: () async {
+                                _key.currentState!.save();
+                                if (_key.currentState!.validate()) {
+                                  var currentUser =
+                                      await Amplify.Auth.getCurrentUser();
+                                  sendEmail(currentUser.username, email.text,
+                                      subject.text, body.text);
+
+                                  Navigator.pop(context);
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const HelpCenter2()),
+                                  );
+                                }
+                              },
+                              child: const Text(
+                                "إرسال",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: 'DINNextLTArabic',
+                                    color: Colors.black),
+                                textAlign: TextAlign.right,
+                              )),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
-    );
+        )));
   }
 }

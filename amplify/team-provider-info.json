@@ -1,0 +1,21 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-camelapp-dev-175143-authRole",
+      "UnauthRoleArn": "arn:aws:iam::014578718877:role/amplify-camelapp-dev-175143-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::014578718877:role/amplify-camelapp-dev-175143-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-camelapp-dev-175143-deployment",
+      "UnauthRoleName": "amplify-camelapp-dev-175143-unauthRole",
+      "StackName": "amplify-camelapp-dev-175143",
+      "StackId": "arn:aws:cloudformation:us-east-1:014578718877:stack/amplify-camelapp-dev-175143/96cdeee0-3ce1-11ed-b10f-0a13241398e9",
+      "AmplifyAppId": "d2yc5gavr8siln"
+    },
+    "categories": {
+      "auth": {
+        "camelapp7128f7f3": {},
+        "true": {}
+      }
+    }
+  }
+}

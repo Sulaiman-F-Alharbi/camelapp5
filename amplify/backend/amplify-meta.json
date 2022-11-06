@@ -1,0 +1,102 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-camelapp-dev-175143-authRole",
+      "UnauthRoleArn": "arn:aws:iam::014578718877:role/amplify-camelapp-dev-175143-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::014578718877:role/amplify-camelapp-dev-175143-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-camelapp-dev-175143-deployment",
+      "UnauthRoleName": "amplify-camelapp-dev-175143-unauthRole",
+      "StackName": "amplify-camelapp-dev-175143",
+      "StackId": "arn:aws:cloudformation:us-east-1:014578718877:stack/amplify-camelapp-dev-175143/96cdeee0-3ce1-11ed-b10f-0a13241398e9",
+      "AmplifyAppId": "d2yc5gavr8siln"
+    }
+  },
+  "auth": {
+    "camelapp7128f7f3": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-camelapp-dev-175143-deployment/amplify-cfn-templates/auth/camelapp7128f7f3-cloudformation-template.json",
+        "logicalId": "authcamelapp7128f7f3"
+      },
+      "lastPushTimeStamp": "2022-10-29T10:01:13.657Z",
+      "output": {
+        "UserPoolId": "us-east-1_lUeEHgFiW",
+        "AppClientIDWeb": "2pe3jr9dmavks7h6cmhuaqrc1k",
+        "AppClientID": "6askdl234c1fo44otnlkfvpj03",
+        "IdentityPoolId": "us-east-1:641a3864-817e-4ead-a670-9d1b2eb7cfa4",
+        "UserPoolArn": "arn:aws:cognito-idp:us-east-1:014578718877:userpool/us-east-1_lUeEHgFiW",
+        "IdentityPoolName": "camelapp7128f7f3_identitypool_7128f7f3__dev",
+        "UserPoolName": "camelapp7128f7f3_userpool_7128f7f3"
+      },
+      "lastPushDirHash": "xowGSVZOEc0CBFbnV/sxT3Au9pI="
+    }
+  },
+  "storage": {
+    "s32c53d6f5": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "lastPushTimeStamp": "2022-10-29T10:01:13.663Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-camelapp-dev-175143-deployment/amplify-cfn-templates/storage/cloudformation-template.json",
+        "logicalId": "storages32c53d6f5"
+      },
+      "output": {
+        "BucketName": "camelappstorage123456789175143-dev",
+        "Region": "us-east-1"
+      },
+      "lastPushDirHash": "pKULeEQmYpaZh9UZZvnpfl8EDMs="
+    }
+  },
+  "api": {
+    "camelapp": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "defaultAuthentication": {
+            "authenticationType": "API_KEY",
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 365,
+              "apiKeyExpirationDate": "2023-10-29T09:55:42.024Z",
+              "description": ""
+            }
+          },
+          "additionalAuthenticationProviders": []
+        },
+        "GraphQLAPIIdOutput": "oxv2uqzsrrecne64gs5lgsic3i",
+        "GraphQLAPIEndpointOutput": "https://vvcpnx2uyjhqvcv2hlryfn5uj4.appsync-api.us-east-1.amazonaws.com/graphql",
+        "GraphQLAPIKeyOutput": "da2-udoukhmgrjamta45au43irkjqy"
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-camelapp-dev-175143-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apicamelapp"
+      },
+      "lastPushTimeStamp": "2022-10-29T10:01:14.683Z",
+      "lastPushDirHash": "sg25iY/mOTpsd+wFKgfoT8+fcBs="
+    }
+  }
+}

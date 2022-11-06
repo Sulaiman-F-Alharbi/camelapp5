@@ -1,0 +1,7 @@
+{
+    "AppSyncApiName": "camelapp",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": false,
+    "S3DeploymentBucket": "amplify-camelapp-dev-175143-deployment",
+    "S3DeploymentRootKey": "amplify-appsync-files/c9a3a2fd01fa47d1ed3fd09100f74de133e0c15c"
+}
